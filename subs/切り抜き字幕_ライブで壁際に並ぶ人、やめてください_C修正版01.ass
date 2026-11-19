@@ -1,0 +1,55 @@
+[Script Info]
+Title: ライブで壁際に並ぶ人、やめてください (20261118-230925) C修正版01
+ScriptType: v4.00+
+PlayResX: 720
+PlayResY: 1280
+ScaledBorderAndShadow: yes
+WrapStyle: 2
+YCbCr Matrix: TV.709
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Title,Noto Sans CJK JP,46,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,5,0,8,20,20,34,1
+Style: Sub,Noto Sans CJK JP,52,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,5,0,2,30,30,170,1
+Style: Label,Noto Sans CJK JP,30,&H00FFFFFF,&H000000FF,&H60000000,&H60000000,-1,0,0,0,100,100,0,0,3,10,0,2,40,40,340,1
+Style: End,Noto Sans CJK JP,30,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,3,0,2,20,20,44,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 5,0:00:00.00,0:01:03.08,Title,,0,0,0,,{\fs32\c&H00E5FF&}ライブ、最前派？後方派？\N{\fs48\c&HFFFFFF&}「壁際族」のみなさんへ
+Dialogue: 0,0:00:00.15,0:00:02.79,Sub,,0,0,0,,絶対に壁際に\N並ぶのやめてください
+Dialogue: 1,0:00:02.79,0:00:05.68,Label,,0,0,0,,コメント「みんなから最前行けと言われまして」
+Dialogue: 0,0:00:03.08,0:00:05.18,Sub,,0,0,0,,うちのお客さん
+Dialogue: 0,0:00:05.18,0:00:05.73,Sub,,0,0,0,,ごめんね
+Dialogue: 0,0:00:05.73,0:00:09.75,Sub,,0,0,0,,壁際に並んじゃう\Nタイプだからさ
+Dialogue: 0,0:00:10.43,0:00:11.62,Sub,,0,0,0,,来年の目標は
+Dialogue: 0,0:00:11.62,0:00:13.52,Sub,,0,0,0,,最前に行きたいと\N言ってくれる人が
+Dialogue: 0,0:00:13.93,0:00:15.75,Sub,,0,0,0,,新しく増えることかな
+Dialogue: 0,0:00:15.79,0:00:17.14,Sub,,0,0,0,,でもなんか\N後ろからこう
+Dialogue: 0,0:00:17.14,0:00:18.69,Sub,,0,0,0,,やっぱこういう景色を\N見たいなって
+Dialogue: 0,0:00:18.69,0:00:19.67,Sub,,0,0,0,,人もいるしね
+Dialogue: 1,0:00:19.67,0:00:22.82,Label,,0,0,0,,コメント「壁際族という新しいジャンルが」
+Dialogue: 0,0:00:20.30,0:00:22.42,Sub,,0,0,0,,「{\c&H00E5FF&}壁際族{\c&HFFFFFF&}という\Nジャンルが」とか言って
+Dialogue: 0,0:00:22.87,0:00:24.02,Sub,,0,0,0,,本当だよね
+Dialogue: 0,0:00:25.12,0:00:26.62,Sub,,0,0,0,,だってさ\Nスタッフがさ
+Dialogue: 0,0:00:26.62,0:00:28.47,Sub,,0,0,0,,壁際に並べって\N言ったからさ
+Dialogue: 0,0:00:28.47,0:00:30.82,Sub,,0,0,0,,とかって言う人も\Nいるしね
+Dialogue: 0,0:00:32.25,0:00:33.82,Sub,,0,0,0,,どんな言い訳
+Dialogue: 0,0:00:34.12,0:00:36.02,Sub,,0,0,0,,そんな言い訳\Nないだろうと思って
+Dialogue: 1,0:00:36.65,0:00:40.25,Label,,0,0,0,,視聴者コメントを読み上げ
+Dialogue: 0,0:00:37.32,0:00:38.80,Sub,,0,0,0,,「最前はもう\Nやめときます」
+Dialogue: 0,0:00:38.80,0:00:39.65,Sub,,0,0,0,,「壁際に」
+Dialogue: 0,0:00:39.65,0:00:40.70,Sub,,0,0,0,,やめて
+Dialogue: 0,0:00:40.89,0:00:42.30,Sub,,0,0,0,,壁際はもう
+Dialogue: 0,0:00:42.40,0:00:45.04,Sub,,0,0,0,,絶対に壁際に\N並ぶのやめてください
+Dialogue: 1,0:00:45.11,0:00:48.86,Label,,0,0,0,,視聴者コメントを読み上げ
+Dialogue: 0,0:00:45.71,0:00:47.31,Sub,,0,0,0,,「壁際に固まるにしても」
+Dialogue: 0,0:00:47.31,0:00:48.86,Sub,,0,0,0,,「{\c&H00E5FF&}縦一列{\c&HFFFFFF&}は\Nマジウケる」って
+Dialogue: 0,0:00:48.86,0:00:49.78,Sub,,0,0,0,,ほんとだよね
+Dialogue: 0,0:00:49.78,0:00:51.36,Sub,,0,0,0,,ほんと言ってやって\Nそれ
+Dialogue: 0,0:00:52.11,0:00:53.58,Sub,,0,0,0,,横に並べばいい
+Dialogue: 0,0:00:54.92,0:00:57.37,Sub,,0,0,0,,{\c&H00E5FF&}小学生の整列{\c&HFFFFFF&}じゃ\Nないんだから
+Dialogue: 0,0:00:57.97,0:01:00.27,Sub,,0,0,0,,小学生の整列で\N縦に並ぶんだったら
+Dialogue: 0,0:01:00.27,0:01:01.52,Sub,,0,0,0,,まだ分かるけどね
+Dialogue: 6,0:01:01.08,0:01:03.08,End,,0,0,0,,本編は17LIVE「かなまる」で配信中
+Dialogue: 0,0:01:01.92,0:01:03.08,Sub,,0,0,0,,違うよねっていう
