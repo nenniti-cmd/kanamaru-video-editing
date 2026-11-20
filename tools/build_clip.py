@@ -123,6 +123,14 @@ def main():
             fc.append(f"{trimv},split[vb{i}a][vb{i}b]")
             fc.append(f"[vb{i}b]crop={bw}:{bh}:{bx}:{by},boxblur=luma_radius=40:luma_power=3:chroma_radius=20:chroma_power=3[vb{i}c]")
             fc.append(f"[vb{i}a][vb{i}c]overlay={bx}:{by}[vs{i}]")
+        elif s.get("zoom"):
+            # punch-in: enlarge the centre (upper part, where the face usually is) of spec["blur_rect"] (the card)
+            bx, by, bw, bh = spec["blur_rect"]
+            z = float(s["zoom"]); zw, zh = int(bw / z) // 2 * 2, int(bh / z) // 2 * 2
+            zx, zy = (bw - zw) // 2, int((bh - zh) * 0.35)
+            fc.append(f"{trimv},split[vz{i}a][vz{i}b]")
+            fc.append(f"[vz{i}b]crop={bw}:{bh}:{bx}:{by},crop={zw}:{zh}:{zx}:{zy},scale={bw}:{bh}:flags=lanczos,setsar=1[vz{i}c]")
+            fc.append(f"[vz{i}a][vz{i}c]overlay={bx}:{by}[vs{i}]")
         else:
             fc.append(f"{trimv}[vs{i}]")
         tempo = ""

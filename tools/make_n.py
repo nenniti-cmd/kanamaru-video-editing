@@ -10,8 +10,9 @@ CONTENT.json holds only what changes per clip:
   source          : free-form info about the recording (kept in the spec)
   card_crop_y     : (optional) first source row of the card crop, in 720x1280 source pixels (default 0 = top)
   end_text        : (optional) text of the end pill (default from the template: 17LIVEで配信中)
+  end_seconds     : (optional) how long the end pill is shown (default 3.0); shorten it when a comment bubble is up at the end
   segments        : [{name, in, out, voff?, speed?, mute?, blur?, captions:[{s,e,text}], comments:[{s,e,text}], notes:[{s,e,text}]}]
-                    blur=true blurs the whole card for that segment (e.g. another person's profile on a phone screen);
+                    zoom=1.12 punches in on the card (upper centre); blur=true blurs the whole card for that segment (e.g. another person's profile on a phone screen);
                     notes = small editorial pill at the top of the card (e.g. 画面はぼかしています).
                     times are SOURCE seconds on the 1/24 grid (same rules as build_clip.py).
                     captions = her words (white, on a cushion inside the card).
@@ -91,7 +92,7 @@ def build_spec(C, T):
         "blur_rect": [T["card"]["x"], T["card"]["y"], T["card"]["w"], T["card"]["h"]],
         "overlays": [frame_overlay(T),
                      {"s": 0, "e": None, "style": "Title", "layer": 5, "text": title},
-                     {"s": -end["seconds"], "e": None, "style": "End", "layer": 6, "text": C.get("end_text", end["text"])}],
+                     {"s": -C.get("end_seconds", end["seconds"]), "e": None, "style": "End", "layer": 6, "text": C.get("end_text", end["text"])}],
     }
 
 
