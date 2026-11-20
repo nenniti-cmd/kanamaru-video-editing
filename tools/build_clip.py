@@ -73,7 +73,8 @@ def main():
     ass_path = os.path.splitext(out)[0] + ".ass"
     with open(ass_path, "w", encoding="utf-8") as f:
         f.write("[Script Info]\n")
-        f.write(f"Title: {spec['title']}\nScriptType: v4.00+\nPlayResX: 720\nPlayResY: 1280\n"
+        pw, ph = spec.get("playres", [720, 1280])
+        f.write(f"Title: {spec['title']}\nScriptType: v4.00+\nPlayResX: {pw}\nPlayResY: {ph}\n"
                 "ScaledBorderAndShadow: yes\nWrapStyle: 2\nYCbCr Matrix: TV.709\n\n")
         f.write("[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, "
                 "Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, "
@@ -93,7 +94,9 @@ def main():
     # frames) and re-stamped N/24, so container timestamp jitter cannot drop or
     # duplicate a frame. Audio: timestamps are replaced by the decoded sample count
     # before resampling, so atrim cuts by sample position, not by jittery packet pts.
-    fc = [f"[0:v]scale=720:1280:flags=lanczos,setsar=1,split={n}" + "".join(f"[v{i}]" for i in range(n)),
+    # spec["video_filter"] lets a layout scale/crop/pad the picture (e.g. a title band); default fills 720x1280
+    vf = spec.get("video_filter", "scale=720:1280:flags=lanczos,setsar=1")
+    fc = [f"[0:v]{vf},split={n}" + "".join(f"[v{i}]" for i in range(n)),
           f"[0:a]asetpts=N/SR/TB,aresample={SR},asetpts=N/SR/TB,aformat=channel_layouts=stereo,asplit={n}"
           + "".join(f"[a{i}]" for i in range(n))]
     fade = spec.get("seam_fade", 0.012)
