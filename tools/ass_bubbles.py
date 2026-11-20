@@ -82,7 +82,7 @@ for line in open(src, encoding="utf-8"):
                (rf"{{\fs{FS}\c&H312838&}}  {body}" if body else ""))
         out.append(f"Dialogue: 7,{a},{b},Label,,0,0,0,,{txt}")
     else:  # End
-        w, h = text_width(text, 34) + 60, 56
+        w, h = text_width(text, 46) + 64, 64
         out.append(f"Dialogue: 6,{a},{b},End,,0,0,0,,{pill(540, EY, w, h, 'EAE0F6', '10')}")
         out.append(f"Dialogue: 7,{a},{b},End,,0,0,0,,{{\\an5\\pos(540,{EY})\\bord0\\shad0}}{text}")
 open(dst, "w", encoding="utf-8").write("\n".join(out) + "\n")
