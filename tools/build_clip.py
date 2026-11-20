@@ -116,7 +116,15 @@ def main():
         dv = int(round(s.get("voff", 0.0) * FPS))
         assert s["_f0"] + dv >= 0, f"segment {i}: voff reaches before the start of the source"
         step = f",framestep={k}" if k > 1 else ""
-        fc.append(f"[v{i}]trim=start_frame={s['_f0'] + dv}:end_frame={s['_f1'] + dv}{step},setpts=N/({FPS}*TB)[vs{i}]")
+        trimv = f"[v{i}]trim=start_frame={s['_f0'] + dv}:end_frame={s['_f1'] + dv}{step},setpts=N/({FPS}*TB)"
+        if s.get("blur"):
+            # privacy: heavy blur over spec["blur_rect"] (x, y, w, h in output pixels) for the whole segment
+            bx, by, bw, bh = spec["blur_rect"]
+            fc.append(f"{trimv},split[vb{i}a][vb{i}b]")
+            fc.append(f"[vb{i}b]crop={bw}:{bh}:{bx}:{by},boxblur=luma_radius=40:luma_power=3:chroma_radius=20:chroma_power=3[vb{i}c]")
+            fc.append(f"[vb{i}a][vb{i}c]overlay={bx}:{by}[vs{i}]")
+        else:
+            fc.append(f"{trimv}[vs{i}]")
         tempo = ""
         if k > 1:   # atempo (max 2.0 per stage), then pad/trim to exactly nf*SPF samples so A/V stay locked
             r, parts = float(k), []

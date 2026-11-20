@@ -10,7 +10,9 @@ CONTENT.json holds only what changes per clip:
   source          : free-form info about the recording (kept in the spec)
   card_crop_y     : (optional) first source row of the card crop, in 720x1280 source pixels (default 0 = top)
   end_text        : (optional) text of the end pill (default from the template: 17LIVEで配信中)
-  segments        : [{name, in, out, voff?, captions:[{s,e,text}], comments:[{s,e,text}]}]
+  segments        : [{name, in, out, voff?, speed?, mute?, blur?, captions:[{s,e,text}], comments:[{s,e,text}], notes:[{s,e,text}]}]
+                    blur=true blurs the whole card for that segment (e.g. another person's profile on a phone screen);
+                    notes = small editorial pill at the top of the card (e.g. 画面はぼかしています).
                     times are SOURCE seconds on the 1/24 grid (same rules as build_clip.py).
                     captions = her words (white, on a cushion inside the card).
                     comments = viewer comments, original text, no user names (slide-in bubble).
@@ -71,12 +73,14 @@ def build_spec(C, T):
         if C.get("title_top") else "{\\fs%d\\c&H%s&}%s" % (t["main_fs"], t["main_bgr"], C["title_main"])
     segs = []
     for s in C["segments"]:
-        seg = {k: v for k, v in s.items() if k not in ("captions", "comments")}
+        seg = {k: v for k, v in s.items() if k not in ("captions", "comments", "notes")}
         seg["captions"] = [{"s": c["s"], "e": c["e"], "style": "Sub",
                             "text": emph(c["text"], e["sub_bgr"], e["sub_base_bgr"])} for c in s.get("captions", [])]
         seg["labels"] = [{"s": c["s"], "e": c["e"], "style": "Label", "layer": 1,
                           "text": "コメント「%s」" % emph(c["text"], e["comment_bgr"], e["comment_base_bgr"])}
                          for c in s.get("comments", [])]
+        # small editorial pill at the top of the card (e.g. "画面はぼかしています"); rendered like the end pill
+        seg["labels"] += [{"s": c["s"], "e": c["e"], "style": "End", "layer": 1, "text": c["text"]} for c in s.get("notes", [])]
         segs.append(seg)
     end = T["end"]
     return {
@@ -84,6 +88,7 @@ def build_spec(C, T):
         "playres": T["playres"], "crf": T["crf"], "end_fade": T["end_fade"], "max_line_chars": T["max_line_chars"],
         "styles": T["styles"], "video_filter": video_filter(T, C.get("card_crop_y", 0)),
         "segments": segs,
+        "blur_rect": [T["card"]["x"], T["card"]["y"], T["card"]["w"], T["card"]["h"]],
         "overlays": [frame_overlay(T),
                      {"s": 0, "e": None, "style": "Title", "layer": 5, "text": title},
                      {"s": -end["seconds"], "e": None, "style": "End", "layer": 6, "text": C.get("end_text", end["text"])}],
