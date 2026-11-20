@@ -15,7 +15,7 @@ stream-copied together):
 Captions are burned in with libass from an ASS file generated from the
 spec (caption times are given in source time and mapped to output time).
 
-usage: build_clip.py SPEC.json SRC.mp4 OUT.mp4 [--ass-only] [--max-mb 9.5]
+usage: build_clip.py SPEC.json SRC.mp4 OUT.mp4 [--ass-only] [--max-mb 9.5] [--use-ass FILE.ass]
 """
 import json, subprocess, sys, re, os
 
@@ -42,6 +42,7 @@ def main():
     spec_path, src, out = sys.argv[1:4]
     ass_only = "--ass-only" in sys.argv
     max_mb = float(sys.argv[sys.argv.index("--max-mb") + 1]) if "--max-mb" in sys.argv else None
+    use_ass = sys.argv[sys.argv.index("--use-ass") + 1] if "--use-ass" in sys.argv else None  # pre-processed ASS (e.g. bubbles)
     spec = json.load(open(spec_path, encoding="utf-8"))
     segs = spec["segments"]
 
@@ -85,6 +86,9 @@ def main():
         for a, b, style, text, layer in sorted(events):
             f.write(f"Dialogue: {layer},{ts(a)},{ts(b)},{style},,0,0,0,,{text}\n")
     print(f"ASS written: {ass_path}  (total {total:.3f}s, {len(segs)} segments)")
+    if use_ass:
+        ass_path = use_ass
+        print(f"using ASS: {ass_path}")
     if ass_only:
         return
 
