@@ -7,8 +7,11 @@ import re, sys
 src, dst = sys.argv[1], sys.argv[2]
 LY = int(sys.argv[sys.argv.index("--y") + 1]) if "--y" in sys.argv else 505
 EY = int(sys.argv[sys.argv.index("--end-y") + 1]) if "--end-y" in sys.argv else 520
-FS = 36
-SLIDE = "--slide-left" in sys.argv   # bubble enters from off-screen left and overlaps the card
+FS = 50
+SLIDE = "--slide-left" in sys.argv
+SUBBOX = "--sub-box" in sys.argv     # one rounded cushion behind all lines of a subtitle (instead of per-line boxes)
+SUB_FS = int(sys.argv[sys.argv.index("--sub-fs") + 1]) if "--sub-fs" in sys.argv else 64
+SUB_BOTTOM = int(sys.argv[sys.argv.index("--sub-bottom") + 1]) if "--sub-bottom" in sys.argv else 1470   # bubble enters from off-screen left and overlaps the card
 SX0 = int(sys.argv[sys.argv.index("--x0") + 1]) if "--x0" in sys.argv else 40
 
 def pill(cx, cy, w, h, color_bgr, alpha="10"):
@@ -21,10 +24,27 @@ def pill(cx, cy, w, h, color_bgr, alpha="10"):
 
 def text_width(s, fs):
     s = re.sub(r"\{[^}]*\}", "", s)
-    return int(sum(fs if ord(c) > 0x2E7F else fs * 0.55 for c in s))
+    em = fs / 1.448          # Noto Sans CJK: ASS font size = ascent+descent = 1.448 em (measured)
+    return int(sum(em if ord(c) > 0x2E7F else em * 0.55 for c in s))
 
 out = []
 for line in open(src, encoding="utf-8"):
+    ms = re.match(r"Dialogue: (\d+),([^,]*),([^,]*),Sub,([^,]*),(\d+),(\d+),(\d+),([^,]*),(.*)$", line.rstrip("\n"))
+    if SUBBOX and ms:
+        a, b, text = ms.group(2), ms.group(3), ms.group(9)
+        lines = text.split("\\N")
+        # measured: line pitch = font size; glyph ink height ~0.66*fs; ink bottom = SUB_BOTTOM
+        w = max(text_width(l, SUB_FS) for l in lines) + 64
+        ink_h = int(SUB_FS * 0.66) + SUB_FS * (len(lines) - 1)
+        pad = 22
+        h = ink_h + 2 * pad
+        x0, y0 = 540 - w // 2, SUB_BOTTOM - ink_h - pad
+        r, k = 22, 12
+        path = (f"m {r} 0 l {w - r} 0 b {w - r + k} 0 {w} {r - k} {w} {r} l {w} {h - r} b {w} {h - r + k} {w - r + k} {h} {w - r} {h} "
+                f"l {r} {h} b {r - k} {h} 0 {h - r + k} 0 {h - r} l 0 {r} b 0 {r - k} {r - k} 0 {r} 0")
+        out.append(f"Dialogue: 0,{a},{b},Sub,,0,0,0,,{{\\an7\\pos({x0},{y0})\\bord0\\shad0\\1c&H1E1418&\\1a&H50&\\p1}}{path}{{\\p0}}")
+        out.append(line.rstrip("\n").replace("Dialogue: 0,", "Dialogue: 1,", 1))
+        continue
     m = re.match(r"Dialogue: (\d+),([^,]*),([^,]*),(Label|End),([^,]*),(\d+),(\d+),(\d+),([^,]*),(.*)$", line.rstrip("\n"))
     if not m:
         out.append(line.rstrip("\n")); continue
@@ -36,7 +56,7 @@ for line in open(src, encoding="utf-8"):
             tag, body = "コメント読み上げ", ""
         fs = FS + 4
         tw = text_width(tag, fs - 10) + (text_width(body, fs) + 20 if body else 0)
-        h = 78; w = tw + 120; cy = LY; x0 = SX0; y0 = cy - h // 2
+        h = 84; w = tw + 110; cy = LY; x0 = SX0; y0 = cy - h // 2
         r = h // 2; k = int(r * 0.55)
         path = (f"m {r} 0 l {w - r} 0 b {w - r + k} 0 {w} {r - k} {w} {r} b {w} {r + k} {w - r + k} {h} {w - r} {h} "
                 f"l {r} {h} b {r - k} {h} 0 {r + k} 0 {r} b 0 {r - k} {r - k} 0 {r} 0")
