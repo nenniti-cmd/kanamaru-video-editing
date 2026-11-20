@@ -60,7 +60,7 @@ def main():
             if b - a < 0.15:
                 continue
             style = c.get("style", "Sub")
-            if style == "Sub" and plain_len(c["text"]) > 12:
+            if style == "Sub" and plain_len(c["text"]) > spec.get("max_line_chars", 12):
                 print(f"WARN long caption line ({plain_len(c['text'])}): {c['text']}", file=sys.stderr)
             events.append((a, b, style, c["text"], c.get("layer", 0)))
         t_out += dur
@@ -106,7 +106,12 @@ def main():
     fade = spec.get("seam_fade", 0.012)
     for i, s in enumerate(segs):
         dur = (s["_f1"] - s["_f0"]) / FPS
-        fc.append(f"[v{i}]trim=start_frame={s['_f0']}:end_frame={s['_f1']},setpts=N/({FPS}*TB)[vs{i}]")
+        # optional per-segment video offset (seconds, on the 1/24 grid after rounding): the picture for audio
+        # time t is taken from t + voff. Used for recordings whose video track is shifted against the audio
+        # (e.g. voff = -16.2 when the video is 16.2 s early).
+        dv = int(round(s.get("voff", 0.0) * FPS))
+        assert s["_f0"] + dv >= 0, f"segment {i}: voff reaches before the start of the source"
+        fc.append(f"[v{i}]trim=start_frame={s['_f0'] + dv}:end_frame={s['_f1'] + dv},setpts=N/({FPS}*TB)[vs{i}]")
         fc.append(f"[a{i}]atrim=start_sample={s['_f0'] * SPF}:end_sample={s['_f1'] * SPF},asetpts=PTS-STARTPTS,"
                   f"afade=t=in:d={fade},afade=t=out:st={dur - fade:.4f}:d={fade}[as{i}]")
     fc.append("".join(f"[vs{i}][as{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac]")
