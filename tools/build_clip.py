@@ -52,11 +52,13 @@ def main():
     for i, s in enumerate(segs):
         f0, f1 = fr(s["in"]), fr(s["out"])
         assert abs(f0 / FPS - s["in"]) < 1e-3 and abs(f1 / FPS - s["out"]) < 1e-3, f"segment {i} not frame aligned"
-        s["_f0"], s["_f1"], s["_t0"] = f0, f1, t_out
-        dur = (f1 - f0) / FPS
+        k = int(s.get("speed", 1))          # integer speed-up (e.g. 3 = 3x); frames are kept 1-in-k
+        assert k >= 1 and (f1 - f0) % k == 0, f"segment {i}: length in frames must be a multiple of speed {k}"
+        s["_f0"], s["_f1"], s["_t0"], s["_k"] = f0, f1, t_out, k
+        dur = (f1 - f0) / FPS / k
         for c in s.get("captions", []) + s.get("labels", []):
-            a = max(c["s"], s["in"]) - s["in"] + t_out
-            b = min(c["e"], s["out"]) - s["in"] + t_out
+            a = (max(c["s"], s["in"]) - s["in"]) / k + t_out
+            b = (min(c["e"], s["out"]) - s["in"]) / k + t_out
             if b - a < 0.15:
                 continue
             style = c.get("style", "Sub")
@@ -105,14 +107,25 @@ def main():
           + "".join(f"[a{i}]" for i in range(n))]
     fade = spec.get("seam_fade", 0.012)
     for i, s in enumerate(segs):
-        dur = (s["_f1"] - s["_f0"]) / FPS
+        k = s["_k"]
+        nf = (s["_f1"] - s["_f0"]) // k     # output frames of this segment
+        dur = nf / FPS
         # optional per-segment video offset (seconds, on the 1/24 grid after rounding): the picture for audio
         # time t is taken from t + voff. Used for recordings whose video track is shifted against the audio
         # (e.g. voff = -16.2 when the video is 16.2 s early).
         dv = int(round(s.get("voff", 0.0) * FPS))
         assert s["_f0"] + dv >= 0, f"segment {i}: voff reaches before the start of the source"
-        fc.append(f"[v{i}]trim=start_frame={s['_f0'] + dv}:end_frame={s['_f1'] + dv},setpts=N/({FPS}*TB)[vs{i}]")
-        fc.append(f"[a{i}]atrim=start_sample={s['_f0'] * SPF}:end_sample={s['_f1'] * SPF},asetpts=PTS-STARTPTS,"
+        step = f",framestep={k}" if k > 1 else ""
+        fc.append(f"[v{i}]trim=start_frame={s['_f0'] + dv}:end_frame={s['_f1'] + dv}{step},setpts=N/({FPS}*TB)[vs{i}]")
+        tempo = ""
+        if k > 1:   # atempo (max 2.0 per stage), then pad/trim to exactly nf*SPF samples so A/V stay locked
+            r, parts = float(k), []
+            while r > 2.0:
+                parts.append("atempo=2.0"); r /= 2.0
+            parts.append(f"atempo={r:.6f}")
+            tempo = "," + ",".join(parts) + f",aresample={SR},apad,atrim=end_sample={nf * SPF},asetpts=N/SR/TB"
+        mute = ",volume=0" if s.get("mute") else ""
+        fc.append(f"[a{i}]atrim=start_sample={s['_f0'] * SPF}:end_sample={s['_f1'] * SPF},asetpts=PTS-STARTPTS{tempo}{mute},"
                   f"afade=t=in:d={fade},afade=t=out:st={dur - fade:.4f}:d={fade}[as{i}]")
     fc.append("".join(f"[vs{i}][as{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac]")
     endfade = spec.get("end_fade", 0.25)
@@ -147,7 +160,7 @@ def main():
     else:
         subprocess.run(base + ["-crf", str(spec.get("crf", 21))] + tail, check=True)
     json.dump({"total": total, "segments": [{"in": s["in"], "out": s["out"], "out_start": round(s["_t0"], 4),
-               "frames": s["_f1"] - s["_f0"]} for s in segs], "loudnorm_pass1": L},
+               "frames": (s["_f1"] - s["_f0"]) // s["_k"], "speed": s["_k"]} for s in segs], "loudnorm_pass1": L},
               open(os.path.splitext(out)[0] + ".timeline.json", "w"), indent=1, ensure_ascii=False)
     print("done:", out)
 
