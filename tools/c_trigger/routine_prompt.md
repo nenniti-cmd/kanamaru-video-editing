@@ -53,6 +53,7 @@
 ## B. 締切時の暫定一覧（mode = deadline_test / deadline_live）
 （自分の独立回答はすでに提出済みなので、ここでは他者の回答を読んでよい。ただし自分の回答は編集しない。）
 2. **重複確認**：タイトルが `{P}C暫定一覧_{group_id}` と一致するファイルがあれば、何も作らずにログ（result=duplicate_skipped）を残して終了する。
+   **締切の確認**：mode が "deadline_live" のとき、現在時刻（JST）が meeting_opened_at の3時間後より前なら、何も作らずにログ（result=too_early_skipped、現在時刻と締切時刻）を残して終了する。meeting_opened_at が読めない場合も同様に終了する（result=blocked）。"deadline_test" では締切前でも続行する（試験用）。
 3. **Zの正式集約の確認**：タイトルに group_id と「集約」または「見比べ」を含むファイルがあれば、Zが対応済みなので何も作らずにログ（result=z_done_skipped、そのファイルID）を残して終了する。meeting_doc_id があれば、その文書に「Z集約」の記入があるかも確認する。
 4. **回答の収集**：タイトルに group_id と「独立提案」または「独立回答」を含むファイルを探し、M・C・Zのどれの回答かを、タイトルと冒頭の記載で判断する。判断できないものは「提出者不明」として扱う。meeting_doc_id があれば、そこにリンクされた回答も対象にする。
 5. **一覧の作成**：受付に Googleドキュメント `{P}C暫定一覧_{group_id}` を作る。
