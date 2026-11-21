@@ -1,22 +1,78 @@
 {
- "_about": "雛形「N」（くすみピンク・カード型）。本人承認 2026-11-20（壁際族 C修正版02）。tools/make_n.py が内容JSONと組み合わせて完成スペックを作る。",
- "playres": [1080, 1920],
+ "_about": "雛形「N」v2（2026-11-21 本人「ひながたごとなおしてください」）。TikTokの上部タブ・検索欄と重ならないよう、タイトルを上端約255pxから、カードを400pxからに下げた（v1は layout_N_v1.json）。tools/make_n.py が内容JSONと組み合わせて完成スペックを作る。",
+ "playres": [
+  1080,
+  1920
+ ],
  "crf": 21,
  "end_fade": 0.3,
  "max_line_chars": 16,
  "styles": [
-  "Title,Noto Sans CJK JP,72,&H00FFFFFF,&H000000FF,&H60000000,&H00000000,-1,0,0,0,100,100,0,0,1,3,0,8,60,60,140,1",
+  "Title,Noto Sans CJK JP,72,&H00FFFFFF,&H000000FF,&H60000000,&H00000000,-1,0,0,0,100,100,0,0,1,3,0,8,60,60,245,1",
   "Sub,Noto Sans CJK JP,64,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,0,0,2,150,150,462,1",
   "Label,Noto Sans CJK JP,36,&H00312838,&H000000FF,&H00312838,&H00312838,-1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1",
   "End,Noto Sans CJK JP,46,&H00312838,&H000000FF,&H00312838,&H00312838,-1,0,0,0,100,100,0,0,1,0,0,5,0,0,0,1",
   "Frame,Noto Sans CJK JP,10,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1"
  ],
- "card": {"x": 135, "y": 330, "w": 810, "h": 1170, "radius": 36,
-          "src_w": 720, "src_h": 1280, "src_crop_h": 1040,
-          "border_bgr": "D3C6E8", "border_alpha": "40", "border_px": 3},
- "background": {"top_rgb": [110, 82, 96], "bottom_rgb": [58, 40, 49], "shadow": 0.55, "shadow_offset": [12, 22], "shadow_blur": 22},
- "title": {"top_fs": 44, "top_bgr": "00E5FF", "main_fs": 66, "main_bgr": "FFFFFF"},
- "end": {"text": "17LIVEで配信中", "seconds": 3.0},
- "emphasis": {"sub_bgr": "00E5FF", "sub_base_bgr": "FFFFFF", "comment_bgr": "7E3AD8", "comment_base_bgr": "312838"},
- "bubbles_args": ["--slide-left", "--x0", "40", "--y", "420", "--end-y", "420", "--sub-box", "--sub-fs", "64", "--sub-bottom", "1449"]
+ "card": {
+  "x": 160,
+  "y": 400,
+  "w": 760,
+  "h": 1098,
+  "radius": 36,
+  "src_w": 720,
+  "src_h": 1280,
+  "src_crop_h": 1040,
+  "border_bgr": "D3C6E8",
+  "border_alpha": "40",
+  "border_px": 3
+ },
+ "background": {
+  "top_rgb": [
+   110,
+   82,
+   96
+  ],
+  "bottom_rgb": [
+   58,
+   40,
+   49
+  ],
+  "shadow": 0.55,
+  "shadow_offset": [
+   12,
+   22
+  ],
+  "shadow_blur": 22
+ },
+ "title": {
+  "top_fs": 44,
+  "top_bgr": "00E5FF",
+  "main_fs": 66,
+  "main_bgr": "FFFFFF"
+ },
+ "end": {
+  "text": "17LIVEで配信中",
+  "seconds": 3.0
+ },
+ "emphasis": {
+  "sub_bgr": "00E5FF",
+  "sub_base_bgr": "FFFFFF",
+  "comment_bgr": "7E3AD8",
+  "comment_base_bgr": "312838"
+ },
+ "bubbles_args": [
+  "--slide-left",
+  "--x0",
+  "40",
+  "--y",
+  "470",
+  "--end-y",
+  "470",
+  "--sub-box",
+  "--sub-fs",
+  "64",
+  "--sub-bottom",
+  "1449"
+ ]
 }
