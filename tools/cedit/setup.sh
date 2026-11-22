@@ -5,7 +5,11 @@ set -euo pipefail
 W=${CEDIT_WORK:-/tmp/cedit}
 mkdir -p "$W"
 command -v ffmpeg >/dev/null || { sudo -n apt-get update -qq && sudo -n apt-get install -y -qq ffmpeg; } || apt-get install -y -qq ffmpeg
-fc-list | grep -q "Noto Sans CJK JP" || { apt-get install -y -qq fonts-noto-cjk || true; }
+if ! fc-list | grep -q "Noto Sans CJK JP"; then
+  { apt-get update -qq && apt-get install -y -qq fonts-noto-cjk; } || { sudo -n apt-get update -qq && sudo -n apt-get install -y -qq fonts-noto-cjk; } || true
+  fc-cache -f >/dev/null 2>&1 || true
+fi
+fc-list | grep -q "Noto Sans CJK JP" || { echo "ERROR: 日本語フォント（Noto Sans CJK JP）が入っていません"; exit 1; }
 if [ ! -x "$W/venv/bin/python" ]; then
   python3 -m venv "$W/venv"
   "$W/venv/bin/pip" install -q --disable-pip-version-check faster-whisper "opencv-python-headless<5" numpy
