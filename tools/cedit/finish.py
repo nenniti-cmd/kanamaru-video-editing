@@ -34,7 +34,7 @@ def main():
     lines.append("freezes>=0.6s " + sh(f"ffmpeg -hide_banner -i '{out}' -vf freezedetect=n=0.003:d=0.6 -map 0:v -f null - 2>&1 | grep -E 'freeze_(start|end)' | sed 's/.*freezedetect[^]]*] //' | tr '\\n' ' '"))
     lines.append("silences>=0.7s " + sh(f"ffmpeg -hide_banner -i '{out}' -af silencedetect=n=-40dB:d=0.7 -f null - 2>&1 | grep -E 'silence_(start|end)' | sed 's/.*silencedetect[^]]*] //' | tr '\\n' ' '"))
     sh(f"grep -v ',Frame,' '{base}_b.ass' > '{base}_text.ass'")
-    lines.append("safezone " + sh(f"python3 -I '{ROOT}/tools/verify/safezone.py' '{base}_text.ass' {dur:.1f} | tail -1") +
+    lines.append("safezone " + sh(f"'{PY}' -I '{ROOT}/tools/verify/safezone.py' '{base}_text.ass' {dur:.1f} | tail -1") +
                  "  ※v2の基準：上端>=252（TikTok）、下端<=1497")
     # sync against source (card area)
     sh(f"ffmpeg -v error -y -i '{out}' -vf 'crop={c['w']}:{c['h']}:{c['x']}:{c['y']},scale=720:1040' -c:v libx264 -preset veryfast -crf 16 -c:a copy '{base}_card.mp4'")
