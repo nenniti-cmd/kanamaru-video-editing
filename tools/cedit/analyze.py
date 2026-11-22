@@ -27,9 +27,10 @@ def run(cmd, **kw):
 
 
 def hf_snapshot(repo):
-    env = dict(os.environ, HF_HUB_DISABLE_XET="1")
-    code = f"from huggingface_hub import snapshot_download; print(snapshot_download('{repo}'))"
-    return subprocess.run([PY, "-c", code], check=True, capture_output=True, text=True, env=env).stdout.strip().splitlines()[-1]
+    # faster-whisper downloads only the files it needs when given the repo id (snapshot_download of the
+    # whole kotoba repo also pulls large extra files). Xet transfer is blocked in this network.
+    os.environ["HF_HUB_DISABLE_XET"] = "1"
+    return repo
 
 
 def main():
